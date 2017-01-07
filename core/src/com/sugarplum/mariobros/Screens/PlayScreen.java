@@ -6,13 +6,16 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -35,6 +38,10 @@ public class PlayScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
+    //zmienne box2d
+    private World world;
+    private Box2DDebugRenderer b2dr; //debug renderer sprawi że będziemy widzieli warstwy obiektów
+
     public PlayScreen(MarioBros game){
         this.game = game;
 
@@ -51,6 +58,78 @@ public class PlayScreen implements Screen {
         map = mapLoader.load("level1.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
+
+        world = new World( new Vector2(0,0), true);
+        b2dr = new Box2DDebugRenderer();
+
+        /*
+        dodajemy obiekty 2d i ich właściwości(fixtures): kształ, tarcie z innymi obiektami etc
+        w tym tutorialu jest to zrobione w konstruktorze PlayScreen, lecz poprawną praktyką
+        jest tworzenie osobnych klas dla obiektów.
+        */
+
+        BodyDef bdef = new BodyDef();
+        PolygonShape shape = new PolygonShape(); //for fixtures
+        FixtureDef fdef = new FixtureDef(); // definiujemy właściwości żeby przypisać je obiektom 2Dbody
+        Body body;
+
+        //będziemy chcieli powiązać  obiekty 2d z level1.tmx z obiektami java typu Bodies i Fixtures
+            //będziemy pobierać obiekty z 3 warsty czyli ground
+            for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+                bdef.type = BodyDef.BodyType.StaticBody;
+                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+
+                body = world.createBody(bdef);
+
+                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                fdef.shape = shape;
+                body.createFixture(fdef);
+            }
+
+            //będziemy pobierać obiekty z 4 warsty czyli pipes
+            for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+                bdef.type = BodyDef.BodyType.StaticBody;
+                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+
+                body = world.createBody(bdef);
+
+                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                fdef.shape = shape;
+                body.createFixture(fdef);
+            }
+
+            //będziemy pobierać obiekty z 6 warsty czyli bricks
+            for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+                bdef.type = BodyDef.BodyType.StaticBody;
+                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+
+                body = world.createBody(bdef);
+
+                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                fdef.shape = shape;
+                body.createFixture(fdef);
+            }
+
+             //będziemy pobierać obiekty z 5 warsty czyli coins
+            for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+                bdef.type = BodyDef.BodyType.StaticBody;
+                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+
+                body = world.createBody(bdef);
+
+                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                fdef.shape = shape;
+                body.createFixture(fdef);
+            }
+
 
     }
 
@@ -81,7 +160,9 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClearColor(0,0,0,1); // Color + Aplha
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the screen
 
-        renderer.render();
+        renderer.render(); //renderowanie mapy
+
+        b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
