@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
+import com.sugarplum.mariobros.Scenes.Hud;
 
 /**
  * Created by MikePlum on 2016-12-17.
@@ -17,15 +18,18 @@ import com.sugarplum.mariobros.MarioBros;
 public class PlayScreen implements Screen {
 
     private MarioBros game;
-    Texture texture;
+
     private OrthographicCamera gamecam;
     private Viewport gamePort;
+    private Hud hud;
+
+
 
     public PlayScreen(MarioBros game){
         this.game = game;
-        texture = new Texture("badlogic.jpg");
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, gamecam);
+        hud = new Hud(game.batch);
 
     }
 
@@ -38,10 +42,9 @@ public class PlayScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1,0,0,1); // Color + Aplha
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear the screen
-        game.batch.setProjectionMatrix(gamecam.combined); //Gdzie jest ustawiona kapera
-        game.batch.begin(); //otwiera batch
-        game.batch.draw(texture, 0, 0); // rysuje teksture
-        game.batch.end(); //konczy i wyświetla na ekran
+
+        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
     }
 
     @Override

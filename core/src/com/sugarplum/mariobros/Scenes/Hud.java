@@ -42,7 +42,7 @@ public class Hud {
         viewport = new FitViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport,sb);  // będziemy używać tego samego spriteBatcha co MarioBros nie tworzymy żadnego nowego żeby mieć pewność że nie został nigdzie w pamięci utworzony niepotrzebnie nowy spriteBatch
         /*
-        o stageu myślimy jak o pudle w którym znajdują się wigety
+        o stage'u myślimy jak o pudle w którym znajdują się wigety
         żeby były one uporządkowane musimy je poustawiać w odpowienich miejscach
         pudła. A do tego potrzebne są "przegródki" posłuży do tego klasa Table.
         */
@@ -53,9 +53,10 @@ public class Hud {
 
         countdownLabel = new Label(String.format("%03d", worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        marioLabel = new Label("MARIO", new Label.LabelStyle(new BitmapFont(), Color.WHITE));:
+        timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        marioLabel = new Label("MARIO", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        worldLabel = new Label("WORLD", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         table.add(marioLabel).expandX().padTop(10);
         table.add(worldLabel).expandX().padTop(10);
