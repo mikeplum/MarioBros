@@ -7,10 +7,11 @@ import com.sugarplum.mariobros.MarioBros;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
+		//System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
 		config.title = "MarioBros";
-		config.width = 1920;
-		config.height = 1080;
+		config.width = 1200;
+		config.height = 624;
+
 		new LwjglApplication(new MarioBros(), config);
 	}
 }

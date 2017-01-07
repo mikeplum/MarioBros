@@ -34,6 +34,7 @@ public class Hud {
     Label marioLabel;
     Label levelLabel;
 
+
     public Hud(SpriteBatch sb){
         worldTimer = 300;
         timeCount = 0;
@@ -64,7 +65,7 @@ public class Hud {
         table.row();
         table.add(scoreLabel).expandX();
         table.add(levelLabel).expandX();
-        table.add(countdownLabel).expand();
+        table.add(countdownLabel).expandX();
 
         stage.addActor(table);
     }
