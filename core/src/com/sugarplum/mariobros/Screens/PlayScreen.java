@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
+import com.sugarplum.mariobros.Sprites.Mario;
 
 /**
  * Created by MikePlum on 2016-12-17.
@@ -38,6 +39,8 @@ public class PlayScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
+    private  Mario player;
+
     //zmienne box2d
     private World world;
     private Box2DDebugRenderer b2dr; //debug renderer sprawi że będziemy widzieli warstwy obiektów
@@ -49,7 +52,7 @@ public class PlayScreen implements Screen {
         gamecam = new OrthographicCamera();
 
         //tworzymy fitVieport by utrzymać aspect ratio jaki nas interesuje
-        gamePort = new FitViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, gamecam);
+        gamePort = new FitViewport(MarioBros.V_WIDTH , MarioBros.V_HEIGHT , gamecam);
 
         //tworzymy Heads-up Display czyli interface graficzy odpowiedzialny za wyświetlanie dodatkowych informacji w grze
         hud = new Hud(game.batch);
@@ -57,11 +60,12 @@ public class PlayScreen implements Screen {
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
+
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
 
-        world = new World( new Vector2(0,0), true);
+        world = new World( new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
-
+        player = new Mario(world);
         /*
         dodajemy obiekty 2d i ich właściwości(fixtures): kształ, tarcie z innymi obiektami etc
         w tym tutorialu jest to zrobione w konstruktorze PlayScreen, lecz poprawną praktyką
@@ -147,6 +151,8 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         handleImput(dt);
+
+        world.step(1/60f, 6, 2);
 
         gamecam.update();
         //będziemy renderować czyli podawać na wyjście na ekran tylko to co widzi nasza kamera
