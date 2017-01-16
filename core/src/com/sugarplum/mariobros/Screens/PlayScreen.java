@@ -2,6 +2,7 @@ package com.sugarplum.mariobros.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -52,16 +53,17 @@ public class PlayScreen implements Screen {
         gamecam = new OrthographicCamera();
 
         //tworzymy fitVieport by utrzymać aspect ratio jaki nas interesuje
-        gamePort = new FitViewport(MarioBros.V_WIDTH , MarioBros.V_HEIGHT , gamecam);
+        gamePort = new FitViewport(MarioBros.V_WIDTH / MarioBros.PPM, MarioBros.V_HEIGHT / MarioBros.PPM, gamecam);
 
         //tworzymy Heads-up Display czyli interface graficzy odpowiedzialny za wyświetlanie dodatkowych informacji w grze
         hud = new Hud(game.batch);
 
+        //ładujemy mapę i ustawiamy renderer mapy
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("level1.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
+        renderer = new OrthogonalTiledMapRenderer(map,1  / MarioBros.PPM);
 
-        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
+        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         world = new World( new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
@@ -83,11 +85,11 @@ public class PlayScreen implements Screen {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
                 bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM  );
 
                 body = world.createBody(bdef);
 
-                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                shape.setAsBox( (rect.getWidth() / 2) / MarioBros.PPM  , (rect.getHeight() / 2) / MarioBros.PPM );
                 fdef.shape = shape;
                 body.createFixture(fdef);
             }
@@ -97,11 +99,11 @@ public class PlayScreen implements Screen {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
                 bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM );
 
                 body = world.createBody(bdef);
 
-                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM , (rect.getHeight() / 2 ) / MarioBros.PPM );
                 fdef.shape = shape;
                 body.createFixture(fdef);
             }
@@ -111,11 +113,11 @@ public class PlayScreen implements Screen {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
                 bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM );
 
                 body = world.createBody(bdef);
 
-                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM , (rect.getHeight() / 2 ) / MarioBros.PPM );
                 fdef.shape = shape;
                 body.createFixture(fdef);
             }
@@ -125,11 +127,11 @@ public class PlayScreen implements Screen {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
                 bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set(rect.getX() + rect.getWidth() / 2 , rect.getY() + rect.getHeight() / 2 );
+                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
 
                 body = world.createBody(bdef);
 
-                shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2 );
+                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM, (rect.getHeight() / 2 ) / MarioBros.PPM );
                 fdef.shape = shape;
                 body.createFixture(fdef);
             }
@@ -143,9 +145,18 @@ public class PlayScreen implements Screen {
     }
 
     private void handleImput(float dt) {
-        if(Gdx.input.isTouched())
-            //Tymczaswoe sprawdzenie działania input: jeśli damy cokolwiek na wejście jakieklowiek klikanie to kamera ma się przesówać
-            gamecam.position.x += 100 * dt;
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+            player.b2body.applyLinearImpulse(new Vector2(0,4f), player.b2body.getWorldCenter(), true);
+            System.out.println("Moved up");
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
+            player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+            System.out.println("Moved right");
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2){
+            player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+            System.out.println("Moved left");
+        }
     }
 
 
@@ -153,6 +164,8 @@ public class PlayScreen implements Screen {
         handleImput(dt);
 
         world.step(1/60f, 6, 2);
+
+        gamecam.position.x = player.b2body.getPosition().x; //kamera ma śledzić poruszającego się Mario
 
         gamecam.update();
         //będziemy renderować czyli podawać na wyjście na ekran tylko to co widzi nasza kamera
