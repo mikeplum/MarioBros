@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -23,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
 import com.sugarplum.mariobros.Sprites.Mario;
+import com.sugarplum.mariobros.Tools.B2WorldCreator;
 
 /**
  * Created by MikePlum on 2016-12-17.
@@ -30,6 +32,7 @@ import com.sugarplum.mariobros.Sprites.Mario;
 public class PlayScreen implements Screen {
 
     private MarioBros game;
+    private TextureAtlas atlas;
 
     private OrthographicCamera gamecam;
     private Viewport gamePort;
@@ -47,6 +50,9 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer b2dr; //debug renderer sprawi że będziemy widzieli warstwy obiektów
 
     public PlayScreen(MarioBros game){
+
+        atlas = new TextureAtlas("Mario_and_Enemies.pack");
+
         this.game = game;
 
         //tworzymy kamerę która będzie śledziła poczynania Mario
@@ -67,76 +73,15 @@ public class PlayScreen implements Screen {
 
         world = new World( new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
-        player = new Mario(world);
-        /*
-        dodajemy obiekty 2d i ich właściwości(fixtures): kształ, tarcie z innymi obiektami etc
-        w tym tutorialu jest to zrobione w konstruktorze PlayScreen, lecz poprawną praktyką
-        jest tworzenie osobnych klas dla obiektów.
-        */
 
-        BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape(); //for fixtures
-        FixtureDef fdef = new FixtureDef(); // definiujemy właściwości żeby przypisać je obiektom 2Dbody
-        Body body;
+        new B2WorldCreator(world,map);
 
-        //będziemy chcieli powiązać  obiekty 2d z level1.tmx z obiektami java typu Bodies i Fixtures
-            //będziemy pobierać obiekty z 3 warsty czyli ground
-            for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+        //Tworzymy Mario
+        player = new Mario(world, this);
+    }
 
-                bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM  );
-
-                body = world.createBody(bdef);
-
-                shape.setAsBox( (rect.getWidth() / 2) / MarioBros.PPM  , (rect.getHeight() / 2) / MarioBros.PPM );
-                fdef.shape = shape;
-                body.createFixture(fdef);
-            }
-
-            //będziemy pobierać obiekty z 4 warsty czyli pipes
-            for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM );
-
-                body = world.createBody(bdef);
-
-                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM , (rect.getHeight() / 2 ) / MarioBros.PPM );
-                fdef.shape = shape;
-                body.createFixture(fdef);
-            }
-
-            //będziemy pobierać obiekty z 6 warsty czyli bricks
-            for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM );
-
-                body = world.createBody(bdef);
-
-                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM , (rect.getHeight() / 2 ) / MarioBros.PPM );
-                fdef.shape = shape;
-                body.createFixture(fdef);
-            }
-
-             //będziemy pobierać obiekty z 5 warsty czyli coins
-            for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-                bdef.type = BodyDef.BodyType.StaticBody;
-                bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM , (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
-
-                body = world.createBody(bdef);
-
-                shape.setAsBox( (rect.getWidth() / 2 ) / MarioBros.PPM, (rect.getHeight() / 2 ) / MarioBros.PPM );
-                fdef.shape = shape;
-                body.createFixture(fdef);
-            }
-
-
+    public TextureAtlas getAtlas(){
+        return atlas;
     }
 
     @Override
@@ -165,6 +110,8 @@ public class PlayScreen implements Screen {
 
         world.step(1/60f, 6, 2);
 
+        player.update(dt);
+
         gamecam.position.x = player.b2body.getPosition().x; //kamera ma śledzić poruszającego się Mario
 
         gamecam.update();
@@ -183,6 +130,13 @@ public class PlayScreen implements Screen {
 
         b2dr.render(world, gamecam.combined);
 
+
+        game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.begin();;
+        player.draw(game.batch);
+        game.batch.end();
+
+        //ustawiamy batch aby wyświetlał to co widzi kamera Hud
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
@@ -210,6 +164,10 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        map.dispose();
+        renderer.dispose();
+        world.dispose();
+        b2dr.dispose();
+        hud.dispose();
     }
 }
