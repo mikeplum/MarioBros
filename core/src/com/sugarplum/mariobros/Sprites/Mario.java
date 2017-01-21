@@ -3,6 +3,7 @@ package com.sugarplum.mariobros.Sprites;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.sugarplum.mariobros.MarioBros;
@@ -42,6 +43,7 @@ public class Mario extends Sprite {
 
         for(int i=4; i<6; i++)
             frames.add(new TextureRegion(getTexture(), i*16, 10, 16, 18));
+
         marioJump = new Animation(0.2f, frames);
 
         marioStand = new TextureRegion(getTexture(), 0, 10, 16, 18);
@@ -113,6 +115,16 @@ public class Mario extends Sprite {
 
         fdef.shape = shape;
         b2body.createFixture(fdef);
+
+        //sensor for MarioHead
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-3 / MarioBros.PPM, 10 / MarioBros.PPM), new Vector2( 3 / MarioBros.PPM, 10 / MarioBros.PPM));
+        fdef.shape = head;
+        fdef.isSensor = true;
+
+        b2body.createFixture(fdef).setUserData("head");
+
+
     }
 
 }

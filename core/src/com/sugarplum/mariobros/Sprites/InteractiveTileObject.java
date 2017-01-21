@@ -9,13 +9,14 @@ import com.sugarplum.mariobros.MarioBros;
 /**
  * Created by mikeplum on 2017-01-16.
  */
-public class InteractiveTileObject {
+public abstract class InteractiveTileObject {
 
     protected World world;
     protected TiledMapTile tile;
     protected TiledMap map;
     protected Rectangle bounds;
     protected Body body;
+    protected Fixture fixture;
 
     public InteractiveTileObject(World world, TiledMap map, Rectangle bounds){
         this.world = world;
@@ -33,8 +34,9 @@ public class InteractiveTileObject {
 
         shape.setAsBox( (bounds.getWidth() / 2 ) / MarioBros.PPM, (bounds.getHeight() / 2 ) / MarioBros.PPM );
         fdef.shape = shape;
-        body.createFixture(fdef);
+        fixture = body.createFixture(fdef);
     }
 
+    public abstract void onHeadHit();
 }
 

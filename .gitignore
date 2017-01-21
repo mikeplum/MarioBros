@@ -4,3 +4,5 @@
 
 # IDEA config files
 .idea/
+.class
+.gradle

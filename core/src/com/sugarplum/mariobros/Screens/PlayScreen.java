@@ -25,6 +25,7 @@ import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
 import com.sugarplum.mariobros.Sprites.Mario;
 import com.sugarplum.mariobros.Tools.B2WorldCreator;
+import com.sugarplum.mariobros.Tools.WorldContactListener;
 
 /**
  * Created by MikePlum on 2016-12-17.
@@ -78,6 +79,8 @@ public class PlayScreen implements Screen {
 
         //Tworzymy Mario
         player = new Mario(world, this);
+
+        world.setContactListener(new WorldContactListener());
     }
 
     public TextureAtlas getAtlas(){
