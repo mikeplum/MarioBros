@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="C:\workspace\MarioBros\android\assets"><file name="level1.tmx" path="C:\workspace\MarioBros\android\assets\level1.tmx"/><file name="tileset_gutter.png" path="C:\workspace\MarioBros\android\assets\tileset_gutter.png"/></source></dataSet><dataSet config="debug"><source path="C:\workspace\MarioBros\android\src\debug\assets"/></dataSet></merger>
