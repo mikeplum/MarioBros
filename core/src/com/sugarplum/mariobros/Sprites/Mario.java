@@ -26,9 +26,9 @@ public class Mario extends Sprite {
     private float stateTimer; //będzie mierzył ilość czasu w aktualnym stadium animacji
     private boolean runningRight;
 
-    public Mario(World world, PlayScreen screen){
+    public Mario(PlayScreen screen){
         super(screen.getAtlas().findRegion("little_mario"));
-        this.world = world;
+        this.world = screen.getWorld();
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
