@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
+import com.sugarplum.mariobros.Sprites.Goomba;
 import com.sugarplum.mariobros.Sprites.Mario;
 import com.sugarplum.mariobros.Tools.B2WorldCreator;
 import com.sugarplum.mariobros.Tools.WorldContactListener;
@@ -45,8 +46,8 @@ public class PlayScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
-    private  Mario player;
-
+    private Mario player;
+    private Goomba goomba;
     //zmienne box2d
     private World world;
     private Box2DDebugRenderer b2dr; //debug renderer sprawi że będziemy widzieli warstwy obiektów
@@ -89,6 +90,7 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
 
+        goomba = new Goomba(this, .64f, .32f);
     }
 
     public TextureAtlas getAtlas(){
@@ -122,6 +124,7 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         player.update(dt);
+        goomba.update(dt);
         hud.update(dt);//odpalamy Timer
 
         gamecam.position.x = player.b2body.getPosition().x; //kamera ma śledzić poruszającego się Mario
@@ -146,8 +149,9 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();;
         player.draw(game.batch);
-        game.batch.end();
+        goomba.draw(game.batch);
 
+        game.batch.end();
         //ustawiamy batch aby wyświetlał to co widzi kamera Hud
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();

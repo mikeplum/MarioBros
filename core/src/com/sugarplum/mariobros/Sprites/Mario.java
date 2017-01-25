@@ -114,7 +114,11 @@ public class Mario extends Sprite {
         shape.setRadius(7/MarioBros.PPM);
 
         fdef.filter.categoryBits = MarioBros.MARIO_BIT; // jakiej kategorii jest ten fixture czyli w tym wypadku Mario Mario jest kategori Mario Bit
-        fdef.filter.maskBits = MarioBros.DEFAULT_BIT | MarioBros.COIN_BIT | MarioBros.BRICK_BIT; // ustawiamy z czym Mario może kolidować
+        fdef.filter.maskBits = MarioBros.GROUND_BIT |
+                MarioBros.COIN_BIT |
+                MarioBros.BRICK_BIT |
+                MarioBros.ENEMY_BIT |
+                MarioBros.OBJECT_BIT; // ustawiamy z czym Mario może kolidować
 
 
         fdef.shape = shape;
