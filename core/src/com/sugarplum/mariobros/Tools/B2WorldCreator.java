@@ -6,17 +6,27 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Screens.PlayScreen;
 import com.sugarplum.mariobros.Sprites.Brick;
 import com.sugarplum.mariobros.Sprites.Coin;
+import com.sugarplum.mariobros.Sprites.Goomba;
+import com.sugarplum.mariobros.Sprites.Mario;
 
 /**
  * Created by mikeplum on 2017-01-16.
  */
 public class B2WorldCreator {
 
+    private Array<Goomba> goombas;
+
+    public Array<Goomba> getGoombas() {
+        return goombas;
+    }
+
     public B2WorldCreator(PlayScreen screen){
+
 
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
@@ -74,6 +84,13 @@ public class B2WorldCreator {
 
             new Coin(screen, rect);
 
+        }
+
+        //tworzymy i umieszczamy goomby na planszy
+        goombas = new Array<Goomba>();
+        for(MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            goombas.add(new Goomba(screen, rect.getX() / MarioBros.PPM, rect.getY() / MarioBros.PPM));
         }
 
     }

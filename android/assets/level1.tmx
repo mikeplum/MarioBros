@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="211" height="13" tilewidth="16" tileheight="16" nextobjectid="95">
- <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="211" height="13" tilewidth="16" tileheight="16" nextobjectid="106">
+ <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="33" columns="33">
   <image source="../../../../tileset_gutter.png" width="594" height="504"/>
  </tileset>
  <layer name="background" width="211" height="13">
@@ -100,5 +100,17 @@
   <object id="76" x="384.273" y="112.301" width="15.4545" height="15.2727"/>
   <object id="77" x="352.273" y="112.239" width="15.4545" height="15.2727"/>
   <object id="78" x="320.21" y="112.301" width="15.4545" height="15.2727"/>
+ </objectgroup>
+ <objectgroup name="goombas">
+  <object id="96" x="272" y="160" width="16" height="16"/>
+  <object id="97" x="576" y="160" width="16" height="16"/>
+  <object id="98" x="688" y="160" width="16" height="16"/>
+  <object id="99" x="864" y="160" width="16" height="16"/>
+  <object id="100" x="816" y="160" width="16" height="16"/>
+  <object id="101" x="1344" y="32" width="16" height="16"/>
+  <object id="102" x="2064" y="160" width="16" height="16"/>
+  <object id="103" x="2352" y="160" width="16" height="16"/>
+  <object id="104" x="2848" y="160" width="16" height="16"/>
+  <object id="105" x="2752" y="160" width="16" height="16"/>
  </objectgroup>
 </map>

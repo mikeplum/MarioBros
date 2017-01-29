@@ -19,11 +19,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.compression.lzma.Encoder;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
+import com.sugarplum.mariobros.Sprites.Enemy;
 import com.sugarplum.mariobros.Sprites.Goomba;
 import com.sugarplum.mariobros.Sprites.Mario;
 import com.sugarplum.mariobros.Tools.B2WorldCreator;
@@ -47,10 +49,11 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
 
     private Mario player;
-    private Goomba goomba;
+
     //zmienne box2d
     private World world;
     private Box2DDebugRenderer b2dr; //debug renderer sprawi że będziemy widzieli warstwy obiektów
+    private B2WorldCreator creator;
 
     private Music music;
 
@@ -79,7 +82,7 @@ public class PlayScreen implements Screen {
         world = new World( new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
-        new B2WorldCreator(this);
+        creator = new B2WorldCreator(this);
 
         //Tworzymy Mario
         player = new Mario(this);
@@ -90,7 +93,7 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
 
-        goomba = new Goomba(this, .64f, .32f);
+
     }
 
     public TextureAtlas getAtlas(){
@@ -121,10 +124,15 @@ public class PlayScreen implements Screen {
     public void update(float dt) {
         handleImput(dt);
 
-        world.step(1/60f, 6, 2);
+        world.step(1/60f, 6, 2);//dodatkowa informacja: tutaj jest wywoływany ContactListener
 
         player.update(dt);
-        goomba.update(dt);
+        for(Enemy enemy : creator.getGoombas()) {
+            enemy.update(dt);
+            if(enemy.getX() < player.getX() + 224 / MarioBros.PPM){
+                enemy.b2body.setActive(true);
+            }
+        }
         hud.update(dt);//odpalamy Timer
 
         gamecam.position.x = player.b2body.getPosition().x; //kamera ma śledzić poruszającego się Mario
@@ -149,8 +157,9 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();;
         player.draw(game.batch);
-        goomba.draw(game.batch);
-
+        for(Enemy enemy : creator.getGoombas()) {
+            enemy.draw(game.batch);
+        }
         game.batch.end();
         //ustawiamy batch aby wyświetlał to co widzi kamera Hud
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
