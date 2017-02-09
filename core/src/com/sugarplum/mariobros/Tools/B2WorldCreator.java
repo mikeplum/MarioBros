@@ -1,6 +1,5 @@
 package com.sugarplum.mariobros.Tools;
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,10 +8,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Screens.PlayScreen;
-import com.sugarplum.mariobros.Sprites.Brick;
-import com.sugarplum.mariobros.Sprites.Coin;
-import com.sugarplum.mariobros.Sprites.Goomba;
-import com.sugarplum.mariobros.Sprites.Mario;
+import com.sugarplum.mariobros.Sprites.TileObject.Brick;
+import com.sugarplum.mariobros.Sprites.TileObject.Coin;
+import com.sugarplum.mariobros.Sprites.Enemies.Goomba;
 
 /**
  * Created by mikeplum on 2017-01-16.
@@ -73,16 +71,16 @@ public class B2WorldCreator {
 
         //będziemy pobierać obiekty z 6 warsty czyli bricks
         for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
-            new Brick(screen, rect);
+
+            new Brick(screen, object);
         }
 
         //będziemy pobierać obiekty z 5 warsty czyli coins
         for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
-            new Coin(screen, rect);
+
+            new Coin(screen, object);
 
         }
 

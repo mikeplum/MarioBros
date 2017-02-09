@@ -1,4 +1,4 @@
-package com.sugarplum.mariobros.Sprites;
+package com.sugarplum.mariobros.Sprites.Enemies;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;

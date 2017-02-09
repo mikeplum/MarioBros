@@ -1,4 +1,4 @@
-package com.sugarplum.mariobros.Sprites;
+package com.sugarplum.mariobros.Sprites.Enemies;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -31,6 +31,7 @@ public class Goomba extends Enemy {
         setBounds( getX(), getY(), 16 / MarioBros.PPM, 16 / MarioBros.PPM);
         setToDestroy = false;
         destroyed = false;
+        velocity = new Vector2(-1, -1.5f);
     }
 
     public void update(float dt){
@@ -52,7 +53,7 @@ public class Goomba extends Enemy {
     protected void defineEnemy() {
 
         BodyDef bdef = new BodyDef();
-        bdef.position.set(getX(), getY() + 32/MarioBros.PPM);
+        bdef.position.set(getX(), getY());
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
 

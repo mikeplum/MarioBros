@@ -26,6 +26,7 @@ public class MarioBros extends Game {
 	public static final short OBJECT_BIT = 32;
 	public static final short ENEMY_BIT = 64;
 	public static final short ENEMY_HEAD_BIT = 128;
+	public static final short ITEM_BIT = 256;
 
 	public SpriteBatch batch; // kontener przetrzymujący przetrzymujący obrazki i screeny
 
@@ -39,6 +40,7 @@ public class MarioBros extends Game {
 		manager.load("audio/sounds/bump.wav", Sound.class);
 		manager.load("audio/sounds/coin.wav", Sound.class);
 		manager.load("audio/sounds/breakblock.wav", Sound.class);
+		manager.load("audio/sounds/smb_powerup_appears.wav", Sound.class);
 		manager.finishLoading();
 
 		setScreen(new PlayScreen(this));
@@ -55,5 +57,6 @@ public class MarioBros extends Game {
 		super.dispose();
 		manager.dispose();
 		batch.dispose();
+
 	}
 }

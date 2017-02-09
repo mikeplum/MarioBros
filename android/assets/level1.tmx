@@ -3,6 +3,9 @@
  <tileset firstgid="1" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="33" columns="33">
   <image source="../../../../tileset_gutter.png" width="594" height="504"/>
  </tileset>
+ <tileset firstgid="698" name="tileset_gutter" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="924" columns="33">
+  <image source="tileset_gutter.png" width="594" height="504"/>
+ </tileset>
  <layer name="background" width="211" height="13">
   <data encoding="base64" compression="zlib">
    eJztzjEBADAIA7AyC/gXgjtk7CBH/sxLBgAAAAAAAAAAjuv6fwAAkgXFpdNw
@@ -54,7 +57,11 @@
   <object id="48" x="2864.55" y="144.636" width="30.9091" height="30.9091"/>
  </objectgroup>
  <objectgroup name="coins">
-  <object id="79" x="256.182" y="112.273" width="15.4545" height="15.2727"/>
+  <object id="79" x="256.182" y="112.273" width="15.4545" height="15.2727">
+   <properties>
+    <property name="mushroom" value=""/>
+   </properties>
+  </object>
   <object id="80" x="336.273" y="112.182" width="15.4545" height="15.2727"/>
   <object id="81" x="368.091" y="112.182" width="15.4545" height="15.2727"/>
   <object id="82" x="352.229" y="48.2767" width="15.4545" height="15.2727"/>

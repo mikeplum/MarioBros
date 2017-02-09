@@ -1,35 +1,32 @@
 package com.sugarplum.mariobros.Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.compression.lzma.Encoder;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sugarplum.mariobros.MarioBros;
 import com.sugarplum.mariobros.Scenes.Hud;
-import com.sugarplum.mariobros.Sprites.Enemy;
-import com.sugarplum.mariobros.Sprites.Goomba;
+import com.sugarplum.mariobros.Sprites.Enemies.Enemy;
+import com.sugarplum.mariobros.Sprites.Items.Item;
+import com.sugarplum.mariobros.Sprites.Items.ItemDef;
+import com.sugarplum.mariobros.Sprites.Items.Mushroom;
 import com.sugarplum.mariobros.Sprites.Mario;
 import com.sugarplum.mariobros.Tools.B2WorldCreator;
 import com.sugarplum.mariobros.Tools.WorldContactListener;
+
+import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by MikePlum on 2016-12-17.
@@ -57,6 +54,9 @@ public class PlayScreen implements Screen {
 
     private Music music;
 
+    private Array<Item> items;
+    private LinkedBlockingQueue<ItemDef> itemsToSpawn;
+
     public PlayScreen(MarioBros game){
 
         atlas = new TextureAtlas("Mario_and_Enemies.pack");
@@ -79,7 +79,7 @@ public class PlayScreen implements Screen {
 
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
-        world = new World( new Vector2(0,-10), true);
+        world = new World(new Vector2(0,-10), true);
         b2dr = new Box2DDebugRenderer();
 
         creator = new B2WorldCreator(this);
@@ -93,7 +93,22 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
 
+        items = new Array<Item>();
+        itemsToSpawn = new LinkedBlockingQueue<ItemDef>();
 
+    }
+
+    public void spawnItems(ItemDef idef){
+        itemsToSpawn.add(idef);
+    }
+
+    public void handleSpawningItems(){
+        if(!itemsToSpawn.isEmpty()){
+            ItemDef idef = itemsToSpawn.poll();
+            if(idef.type == Mushroom.class){
+                items.add(new Mushroom(this, idef.position.x, idef.position.y));
+            }
+        }
     }
 
     public TextureAtlas getAtlas(){
@@ -123,6 +138,7 @@ public class PlayScreen implements Screen {
 
     public void update(float dt) {
         handleImput(dt);
+        handleSpawningItems();
 
         world.step(1/60f, 6, 2);//dodatkowa informacja: tutaj jest wywoływany ContactListener
 
@@ -133,6 +149,11 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);
             }
         }
+
+        for(Item item : items){
+            item.update(dt);
+        }
+
         hud.update(dt);//odpalamy Timer
 
         gamecam.position.x = player.b2body.getPosition().x; //kamera ma śledzić poruszającego się Mario
@@ -155,10 +176,13 @@ public class PlayScreen implements Screen {
 
 
         game.batch.setProjectionMatrix(gamecam.combined);
-        game.batch.begin();;
+        game.batch.begin();
         player.draw(game.batch);
         for(Enemy enemy : creator.getGoombas()) {
             enemy.draw(game.batch);
+        }
+        for(Item item : items){
+            item.draw(game.batch);
         }
         game.batch.end();
         //ustawiamy batch aby wyświetlał to co widzi kamera Hud
@@ -202,5 +226,6 @@ public class PlayScreen implements Screen {
         world.dispose();
         b2dr.dispose();
         hud.dispose();
+        music.dispose();
     }
 }

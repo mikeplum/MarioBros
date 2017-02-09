@@ -119,8 +119,8 @@ public class Mario extends Sprite {
                 MarioBros.BRICK_BIT |
                 MarioBros.ENEMY_BIT |
                 MarioBros.OBJECT_BIT|
-                MarioBros.ENEMY_HEAD_BIT; // ustawiamy z czym Mario może kolidować
-
+                MarioBros.ENEMY_HEAD_BIT | // ustawiamy z czym Mario może kolidować
+                MarioBros.ITEM_BIT;
 
         fdef.shape = shape;
         b2body.createFixture(fdef);

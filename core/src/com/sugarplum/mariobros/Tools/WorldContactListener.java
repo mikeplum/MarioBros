@@ -3,8 +3,10 @@ package com.sugarplum.mariobros.Tools;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 import com.sugarplum.mariobros.MarioBros;
-import com.sugarplum.mariobros.Sprites.Enemy;
-import com.sugarplum.mariobros.Sprites.InteractiveTileObject;
+import com.sugarplum.mariobros.Sprites.Enemies.Enemy;
+import com.sugarplum.mariobros.Sprites.Items.Item;
+import com.sugarplum.mariobros.Sprites.Mario;
+import com.sugarplum.mariobros.Sprites.TileObject.InteractiveTileObject;
 
 /**
  * Created by mikeplum on 2017-01-19.
@@ -47,7 +49,18 @@ public class WorldContactListener implements ContactListener {
                 ((Enemy) fixA.getUserData()).reversVelocity(true, false);
                 ((Enemy) fixB.getUserData()).reversVelocity(true, false);
                 break;
-
+            case MarioBros.ITEM_BIT | MarioBros.OBJECT_BIT:
+                if(fixA.getFilterData().categoryBits == MarioBros.ITEM_BIT)
+                    ((Item) fixA.getUserData()).reversVelocity(true, false);
+                else if(fixB.getFilterData().categoryBits == MarioBros.ENEMY_HEAD_BIT)
+                    ((Item) fixB.getUserData()).reversVelocity(true, false);
+                break;
+            case MarioBros.ITEM_BIT | MarioBros.MARIO_BIT:
+                if(fixA.getFilterData().categoryBits == MarioBros.ITEM_BIT)
+                    ((Item) fixA.getUserData()).use((Mario) fixB.getUserData());
+                else if(fixB.getFilterData().categoryBits == MarioBros.ITEM_BIT)
+                    ((Item) fixB.getUserData()).use((Mario) fixA.getUserData());
+                break;
         }
 
     }
@@ -55,7 +68,6 @@ public class WorldContactListener implements ContactListener {
     @Override
     public void endContact(Contact contact) {
         //Gdx.app.log("End contact", "");
-
     }
 
     @Override
